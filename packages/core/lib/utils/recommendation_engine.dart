@@ -31,7 +31,7 @@ class RecommendationEngine {
       for (final id in ids) {
         final categoryId = productsById[id]?.categoryId;
         if (categoryId == null) continue;
-        categoryWeights[categoryId] = (categoryWeights[categoryId] ?? 0) + weight;
+        categoryWeights[categoryId] = (categoryWeights[categoryId] ?? 0.0) + weight;
       }
     }
 

@@ -3,6 +3,7 @@ import 'package:customer_app/features/auth/presentation/cubit/auth_state.dart';
 import 'package:decoze_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
@@ -64,8 +65,96 @@ class _ProductDetailBody extends StatelessWidget {
   }
 }
 
-/// جسم الصفحة بعد ما المنتج يتحمّل — المحتوى متمركز وبعرض أقصى على
-/// الشاشات العريضة جدًا (تابلت بالوضع الأفقي) عشان النصوص متمطّطش.
+/// أدوات الذكاء الاصطناعي
+/// اللي بتشتغل على منتج
+/// معين (تحليل المشاعر
+/// والتوافق).
+class _AIToolsSection extends StatelessWidget {
+  final String productId;
+
+  const _AIToolsSection({required this.productId});
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+    const brand = BrandConfig.decoze;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          strings.aiAssistant,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: brand.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _AIToolTile(
+          icon: Icons.sentiment_satisfied_outlined,
+          title: strings.sentimentTitle,
+          subtitle: strings.sentimentSubtitle,
+          onTap: () => context.push('/sentiment', extra: productId),
+        ),
+        const SizedBox(height: 8),
+        _AIToolTile(
+          icon: Icons.chair_outlined,
+          title: strings.compatibilityTitle,
+          subtitle: strings.compatibilitySubtitle,
+          onTap: () =>
+              context.push('/compatibility', extra: productId),
+        ),
+      ],
+    );
+  }
+}
+
+class _AIToolTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _AIToolTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const brand = BrandConfig.decoze;
+
+    return Card(
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: brand.accent.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: brand.accent, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 12,
+            color: brand.textSecondary,
+          ),
+        ),
+        trailing: Icon(Icons.chevron_right,
+            size: 20, color: brand.textSecondary),
+        onTap: onTap,
+      ),
+    );
+  }
+}
 class _ProductDetailContent extends StatelessWidget {
   final ProductLoaded state;
 
@@ -93,6 +182,12 @@ class _ProductDetailContent extends StatelessWidget {
                     ProductPriceRow(product: product, discountPercent: state.discountPercent),
                     const Divider(height: 32),
                     ProductReviewsPreview(reviews: state.reviews),
+                    const SizedBox(height: 16),
+
+                    // أدوات الذكاء الاصطناعي
+                    // لكل منتج (تحليل
+                    // المشاعر + التوافق).
+                    _AIToolsSection(productId: product.id),
                     const SizedBox(height: 90),
                   ],
                 ),

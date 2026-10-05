@@ -29,6 +29,25 @@ A production-quality, full-stack e-commerce starter kit built with **Flutter**, 
 - Structured, multi-field address book (own Firestore subcollection) used at checkout
 - Checkout → shipping method → payment method (mock) → order tracking, order history
 
+**AI shopping features** (customer app — shared `core` engines, Gemini-powered with deterministic offline fallbacks)
+- Multi-website search & comparison — pluggable `WebSearchDataSource` aggregates offers from external merchants, compares them side-by-side, and redirects to the best one (demo `SimulatedWebSearchDataSource` included)
+- Explainable AI recommendations — every recommendation carries a match score plus readable top reasons ("why recommended for you?") and learns from your thumbs up/down
+- Sentiment analysis — smart summary of buyer reviews (overall sentiment gauge, pros, cons, and per-aspect scores)
+- Compatibility ("goes well with") — products that complement the current item, boosted by your purchase history
+- Duplicate detection — finds the same product across websites/merchants and in the local catalog, with confidence scores
+- Price tracking & alerts — watch products, set target prices, get notified on drops/back-in-stock, with price history
+- Alternatives — cheaper / better / similar / newer options with the reason and savings
+- Visual search — search by image (image_picker)
+- AI assistant — conversational shopping help with voice input (speech_to_text)
+- AI collection builder — build product collections from a natural-language brief
+- Smart wishlist — target prices + price-drop/availability notifications
+- Shopping profile — preferred categories, colors, budget, style keywords, and quality preference that power personalization
+- Shopping memory (activity) — recent searches, views, comparisons, purchases, and redirects
+- Privacy controls — toggle personalization/activity/analytics and clear all personal data (right to be forgotten)
+- Analytics — your activity and recommendation performance
+- Merchant reliability — external merchant trust scores
+- Offline access — local engines + cache keep every feature working without a network
+
 **Admin dashboard** (Flutter Web)
 - Role-gated authentication — only accounts with `role: "admin"` on their Firestore user doc can sign in
 - Live revenue/orders/product stats
@@ -58,6 +77,7 @@ decoze/
 ├── apps/
 │   ├── customer_app/          # Mobile app — the customer-facing storefront
 │   │   └── lib/features/{onboarding, auth, home, category, product, search, cart, checkout, order, favourite, address, profile, settings}/
+│   │       └── ...plus AI features: web_search, compare, recommendations, sentiment, compatibility, duplicates, alternatives, price_tracking, visual_search, ai_assistant, collections, wishlist, preferences (shopping profile + privacy), activity, analytics, merchants
 │   │
 │   └── admin_app/             # Flutter Web — the admin dashboard
 │       └── lib/features/{auth, dashboard, products, categories, banners, orders}/

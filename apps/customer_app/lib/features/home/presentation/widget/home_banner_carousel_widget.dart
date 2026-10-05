@@ -4,13 +4,13 @@ import 'package:decoze_core/core.dart';
 import 'package:flutter/material.dart';
 
 class HomeBannerCarouselWidget extends StatefulWidget {
-  final PageController _bannerController;
+  final PageController bannerController;
 
   final List<BannerEntity> banners;
   final BrandConfig brand;
   const HomeBannerCarouselWidget({
     super.key,
-    required this._bannerController,
+    required this.bannerController,
     required this.banners,
     required this.brand,
   });
@@ -29,7 +29,7 @@ class _HomeBannerCarouselWidgetState extends State<HomeBannerCarouselWidget> {
         SizedBox(
           height: 140,
           child: PageView.builder(
-            controller: widget._bannerController,
+            controller: widget.bannerController,
             onPageChanged: (index) => setState(() => _currentBanner = index),
             itemCount: widget.banners.length,
             itemBuilder: (context, index) {

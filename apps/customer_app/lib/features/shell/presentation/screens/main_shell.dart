@@ -1,3 +1,4 @@
+import 'package:customer_app/features/ai_assistant/presentation/screens/assistant_screen.dart';
 import 'package:decoze_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,7 @@ class _MainShellState extends State<MainShell> {
     HomeScreen(),
     CategoriesOverviewScreen(),
     CartScreen(),
+    AssistantScreen(),
     ProfileScreen(),
   ];
 
@@ -83,6 +85,14 @@ class _BottomNavBar extends StatelessWidget {
               isActive: selectedIndex == 2,
               onTap: () => onSelect(2),
             ),
+            // المساعد الذكي — التاب
+            // الجديد في منتصف الشريط.
+            NavItem(
+              icon: "assets/bottom_navigation_bar_icon/Widget.png",
+              label: strings.aiAssistant,
+              isActive: selectedIndex == 3,
+              onTap: () => onSelect(3),
+            ),
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
                 final photoUrl =
@@ -95,12 +105,12 @@ class _BottomNavBar extends StatelessWidget {
                   customIcon: photoUrl == null
                       ? null
                       : AnimatedGradientRing(
-                          isActive: selectedIndex == 3,
+                          isActive: selectedIndex == 4,
                           child: CircleAvatar(radius: 12, backgroundImage: NetworkImage(photoUrl)),
                         ),
                   label: strings.navProfile,
-                  isActive: selectedIndex == 3,
-                  onTap: () => onSelect(3),
+                  isActive: selectedIndex == 4,
+                  onTap: () => onSelect(4),
                 );
               },
             ),

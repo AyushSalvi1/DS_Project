@@ -1,8 +1,26 @@
 import 'dart:async';
 
+import 'package:customer_app/features/ai_assistant/presentation/screens/assistant_screen.dart';
+import 'package:customer_app/features/alternatives/presentation/screens/alternatives_screen.dart';
+import 'package:customer_app/features/analytics/presentation/screens/analytics_screen.dart';
+import 'package:customer_app/features/collections/presentation/screens/collections_screen.dart';
+import 'package:customer_app/features/compare/presentation/screens/compare_screen.dart';
+import 'package:customer_app/features/activity/presentation/screens/activity_screen.dart';
+import 'package:customer_app/features/compatibility/presentation/screens/compatibility_screen.dart';
+import 'package:customer_app/features/duplicates/presentation/screens/duplicates_screen.dart';
+import 'package:customer_app/features/preferences/presentation/screens/privacy_screen.dart';
+import 'package:customer_app/features/preferences/presentation/screens/shopping_profile_screen.dart';
+import 'package:customer_app/features/recommendations/presentation/screens/recommendations_screen.dart';
+import 'package:customer_app/features/sentiment/presentation/screens/sentiment_screen.dart';
 import 'package:customer_app/features/home/presentation/cubit/home_cubit.dart';
+import 'package:customer_app/features/merchants/presentation/screens/merchants_screen.dart';
 import 'package:customer_app/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:customer_app/features/price_tracking/presentation/screens/price_tracking_screen.dart';
 import 'package:customer_app/features/shell/presentation/screens/main_shell.dart';
+import 'package:customer_app/features/visual_search/presentation/screens/visual_search_screen.dart';
+import 'package:customer_app/features/web_search/presentation/screens/web_search_screen.dart';
+import 'package:customer_app/features/wishlist/presentation/screens/wishlist_screen.dart';
+import 'package:decoze_core/core.dart';
 import 'package:decoze_core/repositories_impl/category_repository_impl.dart';
 import 'package:decoze_core/repositories_impl/product_repository_impl.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +46,9 @@ class AppRouter {
       final isAuthScreen =
           state.matchedLocation == '/sign-in' ||
           state.matchedLocation == '/sign-up';
-      final isSplashOrOnboarding = 
-    state.matchedLocation == '/welcome' ||
-    state.matchedLocation == '/onboarding';
+      final isSplashOrOnboarding =
+          state.matchedLocation == '/welcome' ||
+          state.matchedLocation == '/onboarding';
 
       // لسه ماعرفناش حالة المستخدم (أول تحميل) — سيبه في مكانه.
       if (authState is AuthInitial || authState is AuthLoading) {
@@ -53,7 +71,6 @@ class AppRouter {
       return null; // من غير تحويل
     },
     routes: [
-      
       GoRoute(
         path: '/welcome',
         builder: (context, state) => const WelcomeScreen(),
@@ -79,6 +96,133 @@ class AppRouter {
           ),
           child: const MainShell(),
         ),
+      ),
+
+      // =========================================================================
+      // AI Shopping Features
+      // =========================================================================
+
+      // المساعد الذكي (تاب في MainShell + شاشة مستقلة)
+      GoRoute(
+        path: '/assistant',
+        builder: (context, state) => const AssistantScreen(),
+      ),
+
+      // البحث البصري
+      GoRoute(
+        path: '/visual-search',
+        builder: (context, state) => const VisualSearchScreen(),
+      ),
+
+      // المقارنة الذكية — بياخد
+      // List<ProductEntity> في extra.
+      GoRoute(
+        path: '/compare',
+        builder: (context, state) {
+          final products = state.extra as List<ProductEntity>? ?? const [];
+          return CompareScreen(products: products);
+        },
+      ),
+
+      // تتبع الأسعار والتنبيهات
+      GoRoute(
+        path: '/price-tracking',
+        builder: (context, state) => const PriceTrackingScreen(),
+      ),
+
+      // البدائل — بياخد productId في extra.
+      GoRoute(
+        path: '/alternatives',
+        builder: (context, state) {
+          final productId = state.extra as String? ?? '';
+          return AlternativesScreen(productId: productId);
+        },
+      ),
+
+      // المجموعات (AI collection builder)
+      GoRoute(
+        path: '/collections',
+        builder: (context, state) => const CollectionsScreen(),
+      ),
+
+      // قائمة الرغبات الذكية
+      GoRoute(
+        path: '/wishlist',
+        builder: (context, state) => const WishlistScreen(),
+      ),
+
+      // البحث عبر المواقع — بياخد
+      // query في extra.
+      GoRoute(
+        path: '/web-search',
+        builder: (context, state) {
+          final query = state.extra as String? ?? '';
+          return WebSearchScreen(initialQuery: query);
+        },
+      ),
+
+      // التجار والموثوقية
+      GoRoute(
+        path: '/merchants',
+        builder: (context, state) => const MerchantsScreen(),
+      ),
+
+      // التحليلات
+      GoRoute(
+        path: '/analytics',
+        builder: (context, state) => const AnalyticsScreen(),
+      ),
+
+      // تحليل المشاعر — بياخد
+      // productId في extra.
+      GoRoute(
+        path: '/sentiment',
+        builder: (context, state) {
+          final productId = state.extra as String? ?? '';
+          return SentimentScreen(productId: productId);
+        },
+      ),
+
+      // التوافق — بياخد
+      // productId في extra.
+      GoRoute(
+        path: '/compatibility',
+        builder: (context, state) {
+          final productId = state.extra as String? ?? '';
+          return CompatibilityScreen(productId: productId);
+        },
+      ),
+
+      // كشف التكرار (نفس المنتج
+      // في أكتر من موقع)
+      GoRoute(
+        path: '/duplicates',
+        builder: (context, state) => const DuplicatesScreen(),
+      ),
+
+      // ملف التسوق الشخصي
+      GoRoute(
+        path: '/shopping-profile',
+        builder: (context, state) => const ShoppingProfileScreen(),
+      ),
+
+      // إعدادات الخصوصية
+      GoRoute(
+        path: '/privacy',
+        builder: (context, state) => const PrivacyScreen(),
+      ),
+
+      // ذاكرة التسوق
+      GoRoute(
+        path: '/activity',
+        builder: (context, state) => const ActivityScreen(),
+      ),
+
+      // التوصية التفسيرية +
+      // تقييم المستخدم
+      GoRoute(
+        path: '/recommendations',
+        builder: (context, state) => const RecommendationsScreen(),
       ),
     ],
   );

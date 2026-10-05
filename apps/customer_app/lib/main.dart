@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_router.dart';
 import 'features/address/presentation/cubit/address_cubit.dart';
+import 'features/ai_assistant/presentation/cubit/assistant_cubit.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/cubit/auth_state.dart';
 import 'features/cart/presentation/cubit/cart_cubit.dart';
@@ -14,9 +15,11 @@ import 'features/recommendations/presentation/cubit/recommendation_cubit.dart';
 import 'features/settings/presentation/cubit/locale_cubit.dart';
 import 'firebase_options.dart';
 import 'features/favourite/presentation/cubit/favourite_cubit.dart';
+import 'shared/offline_cache_provider.dart';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -34,6 +37,12 @@ Future<void> main() async {
     providerAndroid: kDebugMode ? const AndroidDebugProvider() : const AndroidPlayIntegrityProvider(),
     providerApple: kDebugMode ? const AppleDebugProvider() : const AppleAppAttestProvider(),
   );
+
+  // الكاش الأوفلاين لازم يتعمل
+  // قبل أي Cubit محتاجه (المساعد
+  // الذكي، قائمة الرغبات...).
+  await OfflineCacheProvider.init();
+
   runApp(const DecozeApp());
 }
 
@@ -76,6 +85,17 @@ class DecozeApp extends StatelessWidget {
             recentlyViewedRepository: RecentlyViewedRepositoryImpl(),
           ),
         ),
+        // المساعد الذكي — تاب
+        // ثابت في الشاشة الرئيسية.
+        BlocProvider(
+          create: (_) => AssistantCubit(
+            assistantRepository: AssistantRepositoryImpl(),
+            productRepository: ProductRepositoryImpl(),
+            merchantRepository: MerchantRepositoryImpl(),
+            activityRepository: ActivityRepositoryImpl(),
+            cache: OfflineCacheProvider.cache,
+          ),
+        ),
         BlocProvider(create: (_) => LocaleCubit()),
       ],
       child: const _AppWithRouter(),
@@ -100,18 +120,21 @@ class _AppWithRouter extends StatelessWidget {
         final addressCubit = context.read<AddressCubit>();
         final notificationCenterCubit = context.read<NotificationCenterCubit>();
         final recommendationCubit = context.read<RecommendationCubit>();
+        final assistantCubit = context.read<AssistantCubit>();
         if (state is AuthAuthenticated) {
           cartCubit.attachUser(state.user.uid);
           favouriteCubit.attachUser(state.user.uid);
           addressCubit.attachUser(state.user.uid);
           notificationCenterCubit.attachUser(state.user.uid);
           recommendationCubit.attachUser(state.user.uid);
+          assistantCubit.attachUser(state.user.uid);
         } else if (state is AuthUnauthenticated) {
           cartCubit.attachUser(null);
           favouriteCubit.attachUser(null);
           addressCubit.attachUser(null);
           notificationCenterCubit.attachUser(null);
           recommendationCubit.attachUser(null);
+          assistantCubit.attachUser(null);
         }
       },
       child: BlocBuilder<LocaleCubit, Locale>(

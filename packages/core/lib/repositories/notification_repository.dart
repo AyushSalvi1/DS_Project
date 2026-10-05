@@ -24,4 +24,14 @@ abstract class NotificationRepository {
     required String orderId,
     required String status,
   });
+
+  /// بينادَى من PriceTrackingRepositoryImpl لما تنبيه سعر/توفر
+  /// اتحقق — بتوصل لصاحب التنبيه بس. [type] بيحدد priceDrop
+  /// أو backInStock، و[data] فيه تفاصيل العرض (title, price,
+  /// listingId, productId, dropPercent...).
+  Future<void> notifyUserPriceEvent({
+    required String uid,
+    required NotificationType type,
+    required Map<String, dynamic> data,
+  });
 }

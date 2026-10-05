@@ -64,6 +64,24 @@ class _NotificationTile extends StatelessWidget {
         // نوع خاص بإشعارات الأدمن — مش المفروض يظهر للعميل، بس بنغطيه
         // احتياطًا عشان الـ switch يفضل شامل.
         return (strings.notifNewOrderTitle, '', null);
+      case NotificationType.priceDrop:
+        final title = notification.data['title'] as String? ?? '';
+        final price = notification.data['price'];
+        final priceStr = price is num
+            ? '${BrandConfig.decoze.currencySymbol} ${price.toDouble().toStringAsFixed(2)}'
+            : '';
+        return (
+          strings.notifPriceDropTitle(),
+          strings.notifPriceDropBody(title, priceStr),
+          null,
+        );
+      case NotificationType.backInStock:
+        final title = notification.data['title'] as String? ?? '';
+        return (
+          strings.notifBackInStockTitle(),
+          strings.notifBackInStockBody(title),
+          null,
+        );
     }
   }
 

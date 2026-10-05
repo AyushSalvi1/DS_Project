@@ -3,13 +3,27 @@ import 'package:equatable/equatable.dart';
 /// كل نوع بيوصف حدث مختلف، والـ UI بيبني النص المعروض (بلغة التطبيق
 /// الحالية) من [data] وقت العرض — مش نص جاهز مخزّن، عشان يفضل يترجم
 /// صح حتى لو المستخدم غيّر لغة التطبيق بعد ما الإشعار اتسجّل.
-enum NotificationType { newOrder, orderStatusChanged }
+enum NotificationType {
+  newOrder,
+  orderStatusChanged,
+
+  /// سعر منتج في قائمة الرغبات/تنبيه
+  /// نزل تحت الحد اللي المستخدم
+  /// حدده (أو تحت نسبة الانخفاض).
+  priceDrop,
+
+  /// منتج المستخدم متابعه رجع
+  /// يتوفر في المخزون عند تاجر
+  /// خارجي.
+  backInStock,
+}
 
 class NotificationEntity extends Equatable {
   final String id;
   final NotificationType type;
 
-  /// بيانات الحدث الخام (orderId, status, customerName, total, ...) —
+  /// بيانات الحدث الخام (orderId, status, customerName, total,
+  /// productId, title, price, dropPercent, ...) —
   /// كل نوع بيستخدم مفاتيح مختلفة، راجع نقاط الإنشاء في
   /// NotificationRepositoryImpl.
   final Map<String, dynamic> data;

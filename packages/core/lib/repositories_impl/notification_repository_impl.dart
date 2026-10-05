@@ -59,4 +59,19 @@ class NotificationRepositoryImpl implements NotificationRepository {
     );
     return remoteDataSource.addUserNotification(uid, notification.toJson());
   }
+
+  @override
+  Future<void> notifyUserPriceEvent({
+    required String uid,
+    required NotificationType type,
+    required Map<String, dynamic> data,
+  }) {
+    final notification = NotificationEntity(
+      id: '',
+      type: type,
+      data: data,
+      createdAt: DateTime.now(),
+    );
+    return remoteDataSource.addUserNotification(uid, notification.toJson());
+  }
 }

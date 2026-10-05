@@ -55,6 +55,81 @@ service cloud.firestore {
         allow create: if isAdmin();
         allow delete: if false;
       }
+
+      // =========================================================================
+      // AI Shopping Features — user-scoped subcollections under users/{uid}.
+      // =========================================================================
+
+      // عناصر قائمة الرغبات الذكية (مع السعر المستهدف والتنبيهات).
+      match /wishlist/{productId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // تنبيهات الأسعار والتوفر.
+      match /priceAlerts/{alertId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // تفضيلات التسوق الشخصية (مستند واحد تحت profile).
+      match /profile/preferences {
+        allow read, write: if isOwner(uid);
+      }
+
+      // إعدادات الخصوصية والتخصيص (مستند واحد تحت profile).
+      match /profile/privacy {
+        allow read, write: if isOwner(uid);
+      }
+
+      // ذاكرة التسوق (نشاط المستخدم).
+      match /activity/{activityId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // محادثة المساعد الذكي.
+      match /assistantConversations/{messageId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // مجموعات المنتجات (AI collection builder).
+      match /collections/{collectionId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // تقييمات المستخدم للتوصيات (تعلم الـ AI).
+      match /recommendationFeedback/{feedbackId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // انطباعات التوصيات (عدّاد يومي للتحليلات).
+      match /recommendationImpressions/{impressionId} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // عروض التجار الخارجيين + تاريخ أسعارها (يسجلها سكرابر/Cloud Function).
+    match /externalListings/{listingId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+
+      match /priceHistory/{pointId} {
+        allow read: if isSignedIn();
+        // العميل بيُسجّل نقطة سعر
+        // اليوم لما بيضغط "تحقق
+        // الآن" (في الإنتاج: سكرابر/
+        // Cloud Function). create بس
+        // عشان التاريخ ما يتعدّلش
+        // أو يتمسح من غير admin.
+        allow create: if isSignedIn() &&
+            request.resource.data.keys().hasOnly(['date', 'price']) &&
+            request.resource.data.price is num;
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // التجار الخارجيين ودرجات الموثوقية.
+    match /merchants/{merchantId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
 
     // Created by any signed-in customer's client when they place their own
